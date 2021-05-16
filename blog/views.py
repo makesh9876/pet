@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from .forms import messageform, blogform
+from .forms import messageform,Sellform,Reqform
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .forms import NewUserForm
 from django.contrib.auth.decorators import login_required
@@ -16,22 +16,38 @@ from django.db.models import Q
 from.models import *
 
 # Create your views here.
-def tamil_short_stories(request,slug):
-	blog=Blog.objects.get(slug=slug)
-	related=Blog.objects.filter(slug__contains=slug)[1::]
-	return render(request,'detail.html',{'blog':blog,'rel':related})
+def need(request):
+    form=Reqform(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form=Reqform()
+        return render(request,'req.html',{'form':form})
 
+def buyers(request):
+    data=Req.objects.all()
+    return render(request,'buyers.html',{'req':data})
 
 def index(request):
-	blog=Blog.objects.all()
-	context={'blogs':blog}
-	return render(request,'home.html',context)
+    data=Dogs.objects.all()
+    return render(request,'home.html',{'dogs':data})
+
+
+def sellform(request):
+    form=Sellform(request.POST or None,request.FILES or None)
+    if request.method == "POST":
+        if form.is_valid():
+            print('2nd id valid')
+            form.save()
+        return render(request,'home.html')
+    else:
+        form=Sellform()
+        return render(request,'sellform.html',{'form':form})
 
 def search(request):
-	if request.method =='GET':
-		query=request.GET.get('q')
-		result=Blog.objects.filter(title__contains=query)
-		return render(request, 'home.html',{'blogs':result})
+	pass
 def about(request):
 	return render(request,'about.html')
 def contact(request):
@@ -105,16 +121,7 @@ def login(request):
 def rr(request):
 	return render(request,'register.html')
 
-def userpost(request):
-	form=blogform(request.POST or request.FILES)
-	if request.method=="POST":
-		if form.is_valid():
-			obj=form.save(commit=False)
-			obj.author=request.user
-			
-			obj.save()
-			return redirect('index')
-	return render(request,'userpost.html',{'form':form})
+
 def privacy(request):
     return render(request,'privacy.html')
 def terms(request):

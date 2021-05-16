@@ -1,5 +1,5 @@
 from django import forms
-from .models import Message, UserBlog
+from .models import Message, Dogs, Req
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -21,7 +21,11 @@ class NewUserForm(UserCreationForm):
         if commit:
             user.save()
         return user
-class blogform(forms.ModelForm):
+class Sellform(forms.ModelForm):
     class Meta:
-        model=UserBlog
-        fields=("title","description","stitle","content","stitle1","content1","stitle2","content2","stitle3","content3")
+        model=Dogs
+        fields=["image","breed","description","phone_number","location"]
+class Reqform(forms.ModelForm):
+    class Meta:
+        model=Req
+        fields=['name','need','phone_number']
